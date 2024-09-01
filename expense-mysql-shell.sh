@@ -30,30 +30,32 @@ VALIDATE(){
     fi
 }
 
-
 echo "Script started executing at: $(date)" | tee -a $LOG_FILE
 
 CHECK_ROOT
 
 dnf install mysql-server -y &>>$LOG_FILE
-VALIDATE $? "MySQL server installation"
+VALIDATE $? "Installing MySQL Server"
 
 systemctl enable mysqld &>>$LOG_FILE
-VALIDATE $? "enabled MySQL server"
+VALIDATE $? "Enabled MySQL Server"
 
 systemctl start mysqld &>>$LOG_FILE
-VALIDATE $? "Started MySQL sever"
+VALIDATE $? "Started MySQL server"
 
-mysql -h 44.201.150.124 -u root -pExpenseApp@1 -e 'show databases;' &>>$LOG_FILE
+mysql -h mysql.daws81s.online -u root -pExpenseApp@1 -e 'show databases;' &>>$LOG_FILE
 if [ $? -ne 0 ]
 then
-    echo "mysql root password is not setup, setting now" &>>$LOG_FILE
+    echo "MySQL root password is not setup, setting now" &>>$LOG_FILE
     mysql_secure_installation --set-root-pass ExpenseApp@1
-    VALIDATE $? "setting up root password"
-
+    VALIDATE $? "Setting UP root password"
 else
-    echo -e "mysql root password is already setup .....$Y SKIPPING $N" | tee -a $LOG_FILE 
-fi    
+    echo -e "MySQL root password is already setup...$Y SKIPPING $N" | tee -a $LOG_FILE
+fi
+
+# Assignment
+# check MySQL Server is installed or not, enabled or not, started or not
+# implement the above things
 
 
 # mysql_secure_installation --set-root-pass ExpenseApp@1 &>>$LOG_FILE
